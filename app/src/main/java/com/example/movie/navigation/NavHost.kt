@@ -10,7 +10,7 @@ import androidx.navigation.compose.rememberNavController
 fun  Navigation(){
     val navController = rememberNavController()
     NavHost(
-  navController= navController, startDestination = "Banner Screen"
+  navController= navController, startDestination = "Home Screen"
     ) {
         composable("Banner Screen"){
             BannerScreen(navController=navController , modifier = Modifier)
@@ -18,7 +18,7 @@ fun  Navigation(){
 
         composable("Home Screen"){
 
-            HomeScreen(navController= navController)
+            HomeScreen(navController= navController , modifier = Modifier)
         }
     }
 }
