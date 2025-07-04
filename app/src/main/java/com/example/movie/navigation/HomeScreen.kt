@@ -1,5 +1,6 @@
 package com.example.movie.navigation
 
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,19 +27,25 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -57,13 +64,29 @@ fun HomeScreen(navController: NavHostController, modifier: Modifier) {
     val movieViewModel = viewModel<MovieViewModel>()
     val state = movieViewModel.state
     Scaffold(
-        modifier = modifier.background(Color.Transparent),
+        modifier = modifier.background(MaterialTheme.colorScheme.background),
         topBar = {
             TopBar()
         }, content = { paddingValues ->
             LazyVerticalGrid(columns = GridCells.Fixed(2), Modifier.padding(paddingValues)) {
                 items(state.movie.size) {
+                    if (it >= state.movie.size - 1 && !state.endReach && !state.isLoading) {
+                        movieViewModel.loadNextItems()
+                    }
                     ItemUI(itemIndex = it, movieList = state.movie, navController = navController)
+                }
+                item(state.isLoading) {
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        horizontalArrangement = Arrangement.Center,
+                    ) {
+                        CircularProgressIndicator(color = ProgressIndicatorDefaults.circularColor)
+                    }
+                    if (!state.error.isNullOrEmpty()) {
+                        Toast.makeText(LocalContext.current, state.error, Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
@@ -78,7 +101,9 @@ fun ItemUI(itemIndex: Int, movieList: List<Data>, navController: NavHostControll
         Modifier
             .wrapContentSize()
             .padding(10.dp)
-            .clickable { }
+            .clickable {
+                navController.navigate("Details Screen/${movieList[itemIndex].id}")
+            }
     ) {
         Box(
             modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter,
@@ -98,7 +123,8 @@ fun ItemUI(itemIndex: Int, movieList: List<Data>, navController: NavHostControll
                         color = Color.White.copy(alpha = 0.7f),
                         shape = RoundedCornerShape(6.dp)
                     )
-                    .padding(horizontal = 6.dp, vertical = 4.dp).align(Alignment.TopStart)
+                    .padding(horizontal = 6.dp, vertical = 4.dp)
+                    .align(Alignment.TopStart)
 
             ) {
                 Row(
@@ -113,7 +139,10 @@ fun ItemUI(itemIndex: Int, movieList: List<Data>, navController: NavHostControll
                     )
                     Text(
                         text = movieList[itemIndex].imdb_rating,
-                        style = TextStyle(fontSize = 14.sp , fontFamily = FontFamily(Font(R.font.montserrat)))
+                        style = TextStyle(
+                            fontSize = 14.sp,
+                            fontFamily = FontFamily(Font(R.font.montserrat))
+                        )
                     )
                 }
             }
@@ -144,7 +173,21 @@ fun ItemUI(itemIndex: Int, movieList: List<Data>, navController: NavHostControll
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar() {
-    TopAppBar(
-        title = { Text(text = "Movies") }
+    CenterAlignedTopAppBar(
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary.copy(
+                alpha = 0.4f
+            )
+        ),
+        title = {
+            Text(
+                text = "Movies", style = TextStyle(
+                    fontSize = 20.sp,
+                    fontFamily = FontFamily(Font(R.font.montserrat_medium)),
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            )
+        }
+
     )
 }
