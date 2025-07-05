@@ -45,6 +45,7 @@ class MovieViewModel : ViewModel() {
         loadNextItems()
     }
 
+
     fun loadNextItems() {
         viewModelScope.launch {
             pagination.loadNextPage()

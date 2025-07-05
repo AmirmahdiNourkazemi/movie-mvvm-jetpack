@@ -43,6 +43,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -76,11 +77,11 @@ fun HomeScreen(navController: NavHostController, modifier: Modifier) {
                     ItemUI(itemIndex = it, movieList = state.movie, navController = navController)
                 }
                 item(state.isLoading) {
-                    Row(
-                        Modifier
-                            .fillMaxWidth()
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
                             .padding(8.dp),
-                        horizontalArrangement = Arrangement.Center,
+                        contentAlignment = Alignment.Center
                     ) {
                         CircularProgressIndicator(color = ProgressIndicatorDefaults.circularColor)
                     }
@@ -174,10 +175,14 @@ fun ItemUI(itemIndex: Int, movieList: List<Data>, navController: NavHostControll
 @Composable
 fun TopBar() {
     CenterAlignedTopAppBar(
+
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary.copy(
-                alpha = 0.4f
+                alpha = 0.8f
             )
+        ),
+        modifier = Modifier.shadow(
+            2.dp
         ),
         title = {
             Text(

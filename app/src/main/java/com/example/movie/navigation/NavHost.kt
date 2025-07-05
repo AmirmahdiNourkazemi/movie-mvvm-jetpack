@@ -12,7 +12,7 @@ import androidx.navigation.navArgument
 fun Navigation() {
     val navController = rememberNavController()
     NavHost(
-        navController = navController, startDestination = "Home Screen"
+        navController = navController, startDestination = "Banner Screen"
     ) {
         composable("Banner Screen") {
             BannerScreen(navController = navController, modifier = Modifier)
